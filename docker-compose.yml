@@ -1,0 +1,35 @@
+services:
+  docs-rag-mcp:
+    build: .
+    container_name: docs-rag-mcp
+    ports:
+      - "8051:8051"
+    env_file:
+      - .env # Load environment variables from .env file
+    depends_on:
+      - rag-db
+    restart: unless-stopped
+    networks:
+      - backend
+
+  rag-db:
+    container_name: rag-db
+    image: pgvector/pgvector:pg17 # Use official pgvector image based on PostgreSQL 17
+    env_file:
+      - .env # Load environment variables from .env file
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist data in a named volume
+      - ./initdb:/docker-entrypoint-initdb.d # Mount init scripts directory
+    ports:
+      - "5434:5432" # Map host port 5434 to container port 5432 (optional, for external access)
+    shm_size: 1g # Recommended shared memory size for HNSW index builds
+    restart: always
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:

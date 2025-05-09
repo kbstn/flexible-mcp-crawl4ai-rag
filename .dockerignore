@@ -1,4 +1,55 @@
-crawl4ai_mcp.egg-info
-__pycache__
-.venv
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+env/
+
+# Package installation files
+*.egg-info/
+*.egg
+dist/
+build/
+
+# Local development settings
 .env
+.env.*
+!.env.example
+
+# Git related files
+.git/
+.gitignore
+.gitattributes
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test files
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Docker files (no need to include in build context)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Documentation
+*.md
+LICENSE
+
+# Logs
+logs/
+*.log
+
+# Other unnecessary files
+.DS_Store

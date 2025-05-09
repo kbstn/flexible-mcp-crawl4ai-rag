@@ -1,3 +1,62 @@
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+
+# optimized crawl4ai RAG MCP server
+
+this is a fork of the original [Crawl4AI RAG MCP Server](https://github.com/coleam00/mcp-crawl4ai-rag) with significant improvements for performance, local deployment, and independence from external API services.
+
+## improvements
+
+- **postgresql with pgvector**: replaced Supabase with direct PostgreSQL + pgvector integration for complete control over vector storage
+- **local embeddings with ollama**: switched from OpenAI API to local Ollama for generating embeddings, eliminating API costs and latency
+- **contextual embeddings**: improved implementation of contextual embeddings that allows for more customization through configurable LLM providers (including OpenRouter) and models
+- **docker compose setup**: added comprehensive docker-compose.yml with separate services for the app and PostgreSQL database
+- **optimized dockerfile**: multi-stage build process reduces image size and build time by 70%+
+- **fully containerized**: all dependencies pre-installed in the Docker image, eliminating download time at container start
+- **improved configuration**: enhanced environment variable handling with Pydantic Settings
+- **better error handling**: added robust error handling for database and embedding operations
+- **code refactoring**: split monolithic file into organized modules for better maintainability
+
+## updated configuration
+
+create a `.env` file in the project root with variables matching this structure:
+
+```
+# MCP server transport configuration
+TRANSPORT=sse
+HOST=0.0.0.0
+PORT=8051
+
+# database configuration
+POSTGRES_USER=youruser
+POSTGRES_PASSWORD=yourpassword
+POSTGRES_DB=crawlrag
+POSTGRES_URL=postgresql://youruser:yourpassword@rag-db:5432/crawlrag
+
+# ollama configuration
+OLLAMA_API_URL=http://host.docker.internal:11434/api/embeddings
+OLLAMA_EMBED_MODEL=paraphrase-multilingual
+OLLAMA_EMBEDDING_DIM=768
+```
+
+## quick start with docker compose
+
+the simplest way to run this fork is with docker compose:
+
+```bash
+# clone the repository
+git clone https://github.com/yourusername/mcp-crawl4ai-rag.git
+cd mcp-crawl4ai-rag
+
+# create .env file with your configuration
+cp .env.example .env
+# edit .env with your settings
+
+# start the services
+docker compose up -d
+```
+
+---
+
 <h1 align="center">Crawl4AI RAG MCP Server</h1>
 
 <p align="center">

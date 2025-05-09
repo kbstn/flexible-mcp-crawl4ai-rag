@@ -1,14 +1,15 @@
 -- Enable the pgvector extension
 create extension if not exists vector;
 
+
 -- Create the documentation chunks table
-create table crawled_pages (
+create table crawledpage (
     id bigserial primary key,
     url varchar not null,
     chunk_number integer not null,
     content text not null,  -- Added content column
     metadata jsonb not null default '{}'::jsonb,  -- Added metadata column
-    embedding vector(1536),  -- OpenAI embeddings are 1536 dimensions
+    embedding vector(:embedding_dim),  -- Use environment variable
     created_at timestamp with time zone default timezone('utc'::text, now()) not null,
     
     -- Add a unique constraint to prevent duplicate chunks for the same URL
@@ -16,16 +17,16 @@ create table crawled_pages (
 );
 
 -- Create an index for better vector similarity search performance
-create index on crawled_pages using ivfflat (embedding vector_cosine_ops);
+create index on crawledpage using ivfflat (embedding vector_cosine_ops);
 
 -- Create an index on metadata for faster filtering
-create index idx_crawled_pages_metadata on crawled_pages using gin (metadata);
+create index idx_crawledpage_metadata on crawledpage using gin (metadata);
 
-CREATE INDEX idx_crawled_pages_source ON crawled_pages ((metadata->>'source'));
+CREATE INDEX idx_crawledpage_source ON crawledpage ((metadata->>'source'));
 
 -- Create a function to search for documentation chunks
-create or replace function match_crawled_pages (
-  query_embedding vector(1536),
+create or replace function match_crawledpage (
+  query_embedding vector(:embedding_dim),
   match_count int default 10,
   filter jsonb DEFAULT '{}'::jsonb
 ) returns table (
@@ -40,27 +41,30 @@ language plpgsql
 as $$
 #variable_conflict use_column
 begin
+  SET LOCAL ivfflat.probes = 10; -- Or a higher value if needed, e.g., 15 or 20
   return query
   select
-    id,
+    id::BIGINT,
     url,
     chunk_number,
     content,
     metadata,
-    1 - (crawled_pages.embedding <=> query_embedding) as similarity
-  from crawled_pages
+    1 - (crawledpage.embedding <=> query_embedding) as similarity
+  from crawledpage
   where metadata @> filter
-  order by crawled_pages.embedding <=> query_embedding
+  order by crawledpage.embedding <=> query_embedding
   limit match_count;
+  -- Debug logging can be enabled here with:
+  -- RAISE NOTICE 'Executed match_crawledpage with filter %', filter;
 end;
 $$;
 
 -- Enable RLS on the table
-alter table crawled_pages enable row level security;
+alter table crawledpage enable row level security;
 
 -- Create a policy that allows anyone to read
 create policy "Allow public read access"
-  on crawled_pages
+  on crawledpage
   for select
   to public
   using (true);

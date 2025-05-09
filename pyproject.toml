@@ -7,7 +7,31 @@ requires-python = ">=3.12"
 dependencies = [
     "crawl4ai==0.6.2",
     "mcp==1.7.1",
-    "supabase==2.15.1",
-    "openai==1.71.0",
-    "dotenv==0.9.9"
+    "sqlmodel>=0.0.14",      # Using SQLModel for ORM
+    "psycopg2-binary>=2.9.9", # PostgreSQL driver
+    "pgvector>=0.2.0",       # pgvector support for SQLAlchemy/SQLModel
+    "dotenv==0.9.9",
+    "requests>=2.20.0",      # Added for Ollama API calls
+    "scipy>=1.10.0",
+    "pydantic-settings>=2.0.0",
+    "httpx>=0.27.0",
+    "openai==1.71.0",         # For contextual embedding generation (specific version)
+    "alembic==1.15.2" # Added for database migrations
 ]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-mock>=3.0.0",
+    "pytest-asyncio>=0.20.0"
+]
+
+[tool.pytest.ini_options]
+addopts = "-p pytest_asyncio"
+asyncio_default_fixture_loop_scope = "function"
+pythonpath = [
+  "."
+]
+markers = [
+    "asyncio: mark async tests to be run with asyncio"
+  ]

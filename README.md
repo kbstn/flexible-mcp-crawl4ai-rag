@@ -34,8 +34,8 @@ POSTGRES_URL=postgresql://youruser:yourpassword@rag-db:5432/crawlrag
 
 # ollama configuration
 OLLAMA_API_URL=http://host.docker.internal:11434/api/embeddings
-OLLAMA_EMBED_MODEL=paraphrase-multilingual
-OLLAMA_EMBEDDING_DIM=768
+OLLAMA_EMBED_MODEL=bge-m3-FP16
+OLLAMA_EMBEDDING_DIM=1024
 ```
 
 ## quick start with docker compose
@@ -44,7 +44,7 @@ the simplest way to run this fork is with docker compose:
 
 ```bash
 # clone the repository
-git clone https://github.com/yourusername/mcp-crawl4ai-rag.git
+git clone https://github.com/cairodavila/mcp-crawl4ai-rag.git
 cd mcp-crawl4ai-rag
 
 # create .env file with your configuration

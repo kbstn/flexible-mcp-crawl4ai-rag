@@ -1,6 +1,6 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-# optimized crawl4ai RAG MCP server
+# flexible crawl4ai RAG MCP server
 
 this is a fork of the original [Crawl4AI RAG MCP Server](https://github.com/coleam00/mcp-crawl4ai-rag) with significant improvements for performance, local deployment, and independence from external API services.
 

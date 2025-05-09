@@ -9,3 +9,5 @@ htmlcov/
 # Logs
 logs/
 *.log
+PLANNING.md
+TASK.md

@@ -83,14 +83,13 @@ async def crawl_single_page(ctx: Context, url: str) -> str:
                 meta["crawl_time"] = datetime.now(timezone.utc).isoformat()
                 db_metadatas.append(meta)
             
-            # Create url_to_full_document mapping for contextual embeddings
-            url_to_full_document = {url: result.markdown}
-            
+            # Create list of full documents for contextual embeddings
+            full_documents = [result.markdown] * len(chunks)  # Create a list with the full document repeated for each chunk
             with next(get_session()) as session:
                 # Using the generic add_documents_to_db from utils
                 from src.utils import add_documents_to_db
-                add_documents_to_db(session, db_urls, db_chunk_numbers, db_contents, db_metadatas, url_to_full_document)
-            
+                # changed order of arguments
+                add_documents_to_db(session, db_urls, db_contents, db_metadatas, db_chunk_numbers, full_documents)
             return json.dumps({
                 "success": True,
                 "url": url,

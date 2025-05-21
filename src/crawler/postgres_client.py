@@ -38,8 +38,8 @@ async def store_crawled_documents( # Made async
     all_metadatas: List[Dict[str, Any]] = []
     total_chunks_stored = 0
     
-    # Create url_to_full_document mapping for contextual embeddings
-    url_to_full_document = {}
+    # Create list of full documents for contextual embeddings
+    full_documents = []
 
     for doc in crawl_results:
         source_url = doc['url']
@@ -48,8 +48,8 @@ async def store_crawled_documents( # Made async
             logger.warning(f"No markdown content for URL: {source_url}")
             continue
             
-        # Add to url_to_full_document mapping
-        url_to_full_document[source_url] = markdown_content
+        chunks = await chunk_text_according_to_settings(markdown_content)
+        full_documents.extend([markdown_content] * len(chunks))  # Add full document for each chunk of this URL
 
         chunks = await chunk_text_according_to_settings(markdown_content) # Changed to await new function
 
@@ -69,7 +69,8 @@ async def store_crawled_documents( # Made async
 
     if all_contents:
         # Batch size for DB insertion can be configured in utils or passed here
-        add_documents_to_db(session, all_urls, all_chunk_numbers, all_contents, all_metadatas, url_to_full_document)
+        # fix: changed order of arguments
+        add_documents_to_db(session, all_urls, all_contents, all_metadatas, all_chunk_numbers, full_documents)
     
     return len(crawl_results), total_chunks_stored
 

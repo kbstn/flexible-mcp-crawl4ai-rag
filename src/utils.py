@@ -276,6 +276,10 @@ def add_documents_to_db(
     Adds a batch of documents to the PostgreSQL database.
     Deletes existing documents with the same URL before adding new ones.
     """
+    #print('urls: ',urls)
+    #print('len(urls): ',len(urls))
+    #print('full_documents: ',Optional[List[str]])
+    #print('len(full_documents): ',len(full_documents))
     if not urls or not contents or not page_metadatas or not chunk_numbers:
         print("One of the input lists (urls, contents, page_metadatas, chunk_numbers) is empty. No documents to add.")
         return
